@@ -13,7 +13,7 @@ Adapted from [santifer/career-ops](https://github.com/santifer/career-ops) for C
 claude --plugin-dir ./career-ops-plugin
 
 # Or clone into your plugins directory
-git clone https://github.com/andrewshwetzer/career-ops-plugin.git
+git clone https://github.com/andrew-shwetzer/career-ops-plugin
 ```
 
 ## Quick Start
