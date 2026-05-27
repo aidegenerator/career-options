@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "andrew-shwetzer",
+  "description": "Career-ops Claude Cowork plugin by Andrew Shwetzer.",
+  "owner": {
+    "name": "Andrew Shwetzer"
+  },
+  "plugins": [
+    {
+      "name": "career-ops",
+      "source": "./",
+      "description": "Job search copilot: evaluate postings, generate ATS-optimized resumes, scan portals, track applications, draft outreach.",
+      "author": {
+        "name": "Andrew Shwetzer"
+      },
+      "homepage": "https://github.com/andrew-shwetzer/career-ops-plugin",
+      "repository": "https://github.com/andrew-shwetzer/career-ops-plugin",
+      "license": "MIT",
+      "keywords": [
+        "job-search",
+        "resume",
+        "career",
+        "ATS",
+        "applications"
+      ],
+      "category": "productivity"
+    }
+  ]
+}
