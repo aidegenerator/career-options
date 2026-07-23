@@ -1,6 +1,6 @@
 ---
 name: evaluate
-description: "Evaluate how well a job posting matches your background. Paste a JD or URL and get an honest A-F scored assessment with match analysis, compensation research, positioning strategy, and interview prep. Use when someone says 'evaluate this job', 'should I apply', 'how well do I match', 'rate this job', or pastes what looks like a job description."
+description: "Run a full, saved evaluation for a specific job after a compact screen or when the user explicitly asks for a detailed or full evaluation. Includes evidence mapping, compensation research, positioning, and tailoring guidance. Do not use as the default for a pasted JD or 'should I apply'; use screen first."
 argument-hint: "<job posting URL or paste the full JD text>"
 user-invocable: true
 allowed-tools:
@@ -17,6 +17,8 @@ You are a career strategist evaluating a job posting against the user's backgrou
 Your job: give an honest, specific assessment. Not cheerleading.
 
 Read references/scoring-rubric.md and references/archetypes.md before starting.
+Also read `references/workflow-gates.md` and
+`references/job-identity.md`.
 
 ## Step 0: Load Profile
 
@@ -44,6 +46,7 @@ Accept input as:
 
 Extract these fields:
 - Job title, company name, location/remote policy
+- ATS/requisition ID and canonical posting URL; derive the canonical job key
 - Required qualifications (hard requirements)
 - Preferred qualifications (nice-to-haves)
 - Key responsibilities
@@ -165,21 +168,21 @@ JD requirement.
 ```
 ## F. Interview Prep
 
-For each key JD requirement, prepare a story using STAR + Reflection:
+Identify the three highest-value interview themes and map each to existing
+evidence:
 
-### Story 1: {requirement it addresses}
-- **Situation:** {context from their actual experience}
-- **Task:** {their responsibility}
-- **Action:** {what they did, specific and quantified}
-- **Result:** {measurable outcome}
-- **Reflection:** {what they learned or would do differently}
+### Theme 1: {requirement it addresses}
+- **Likely question:** {one grounded question}
+- **Best source story:** {role/project/proof point from profile}
+- **Missing detail:** {specific fact the user should add, or "None"}
 
-### Story 2: ...
+### Theme 2: ...
 ```
 
-6-10 stories total. Map each to a specific JD requirement. Use ONLY real
-experience from the profile and resume. If there's not enough detail for a
-full story, write a skeleton and mark: "Fill in your specific numbers/details."
+Do not expand these into full STAR stories unless the user is preparing for an
+interview or explicitly asks. This keeps the initial evaluation focused and
+reduces token use. Use ONLY real experience from the profile and resume. Mark
+missing facts as `NEEDS USER INPUT`.
 
 ## Step 9: Overall Score
 
@@ -208,12 +211,20 @@ For scores below 3.0, be direct:
 ## Step 10: Save & Track
 
 Save the full evaluation to `data/evaluations/{company-slug}-{role-slug}-{date}.md`.
+Include the `Job Key` and canonical `Posting URL` in the saved header.
 
-Add a row to `data/applications.md` (create the file if it doesn't exist):
+Add or update the exact-key row in `data/applications.md` (create the file if
+it doesn't exist):
 
-| Date Added | Date Applied | Company | Role | Score | Status | Evaluation | Notes |
-|---|---|---|---|---|---|---|---|
-| {today} | | {company} | {title} | {score} | Evaluated | [View](evaluations/{filename}) | |
+| Date Added | Date Applied | Company | Role | Job Key | Posting URL | Score | Status | Evaluation | Resume | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| {today} | | {company} | {title} | {job-key} | {canonical-url} | {score} | Evaluated | [View](evaluations/{filename}) | | |
+
+Use `references/job-identity.md`:
+
+- Same definitive job key: update the existing row; do not create another.
+- Similar company/title but different keys: keep both and flag
+  `Possible Duplicate`; never silently merge them.
 
 ## Step 11: Suggest Next Steps
 

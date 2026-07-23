@@ -14,6 +14,8 @@ allowed-tools:
 
 Quick-score scan results to find the best candidates for full evaluation.
 
+Read `references/job-identity.md` and `references/workflow-gates.md`.
+
 ## Step 0: Load Context
 
 1. Read `data/profile.yml`
@@ -34,13 +36,24 @@ If pipeline is empty:
 
 For each pipeline entry with status "New":
 
-1. Fetch the full JD if only a URL is stored (use WebFetch)
-2. If WebFetch unavailable, score based on title + location only (partial)
+1. Fetch the full JD if only a URL is stored (use WebFetch once)
+2. If WebFetch is blocked, do not repeatedly retry. Use available fields and
+   label the result `Snippet-only` or `Title-only`.
 3. Quick-score on 3 dimensions:
    - **Title fit** (0-5): How well does the title match target roles?
    - **Requirements fit** (0-5): If JD available, how many requirements match?
    - **Logistics fit** (0-5): Location, seniority, compensation range match?
 4. Average = quick score out of 5.0
+
+Also record score confidence:
+
+- `Full JD`: requirements were directly available.
+- `Snippet-only`: a search snippet supplied limited requirements.
+- `Title-only`: requirements fit is unknown; do not present the numeric score
+  as comparable to a full-JD score.
+
+Unknowns are not gaps. User hard exclusions can filter a role, but show the
+reason and allow an override.
 
 This is FAST scoring. No blocks A-F. No STAR stories. Just a fit check.
 
@@ -55,29 +68,33 @@ Scored **{n}** roles from your pipeline.
 
 ### Recommended for Full Evaluation (score >= 3.5)
 
-| # | Company | Role | Quick Score | Why |
-|---|---|---|---|---|
-| 1 | {company} | {title} | {score}/5 | {one-line reason} |
-| 2 | ... | ... | ... | ... |
+| # | Company | Role | Quick Score | Confidence | Why |
+|---|---|---|---|---|---|
+| 1 | {company} | {title} | {score}/5 | {confidence} | {one-line reason} |
+| 2 | ... | ... | ... | ... | ... |
 
 ### Maybe (score 2.5-3.4)
 
-| # | Company | Role | Quick Score | Why |
-|---|---|---|---|---|
-| ... | | | | |
+| # | Company | Role | Quick Score | Confidence | Why |
+|---|---|---|---|---|---|
+| ... | | | | | |
 
 ### Skip (score < 2.5)
 
-| # | Company | Role | Quick Score | Why |
-|---|---|---|---|---|
-| ... | | | | {why it doesn't fit} |
+| # | Company | Role | Quick Score | Confidence | Why |
+|---|---|---|---|---|---|
+| ... | | | | | {why it doesn't fit} |
 ```
+
+List `Possible Duplicate` records separately. Keep both unless the user chooses
+`Merge` or `Ignore New`.
 
 ## Step 4: Update Pipeline
 
 Update `data/pipeline.md`:
 - Add quick score to each entry
 - Change status from "New" to "Triaged"
+- Preserve Job Key, Posting URL, and Confidence
 
 ## Step 5: Next Steps
 

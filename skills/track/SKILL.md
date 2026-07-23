@@ -20,9 +20,13 @@ Read `data/applications.md`. If it doesn't exist, create it with the header:
 ```markdown
 # Job Applications
 
-| Date Added | Date Applied | Company | Role | Score | Status | Evaluation | Notes |
-|---|---|---|---|---|---|---|---|
+| Date Added | Date Applied | Company | Role | Job Key | Posting URL | Score | Status | Evaluation | Resume | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|
 ```
+
+Read `references/states.md` and `references/job-identity.md`. If an older
+tracker lacks columns, preserve every row while adding empty `Job Key`,
+`Posting URL`, and `Resume` cells.
 
 Then tell the user:
 > "Your tracker is empty. Evaluate a job posting to get started, or
@@ -50,7 +54,9 @@ Show only matching rows, then summary:
 
 ### Update Flow
 
-1. Find the matching row (by company + role, fuzzy match OK)
+1. Find the matching row by Job Key when available. Fuzzy company/role
+   matching may identify candidates, but if more than one row matches, list
+   them and ask the user to choose.
 2. Show current status and proposed new status
 3. Ask for confirmation:
    > "Update **{Company} - {Role}** from **{old status}** to **{new status}**?"
@@ -69,7 +75,9 @@ Validate transitions against references/states.md. If invalid:
 | Metric | Count |
 |---|---|
 | Total evaluated | {n} |
-| Resumes tailored | {n with status >= Resume Ready} |
+| Resume drafts | {n with status Resume Draft} |
+| Resumes approved | {n with status Resume Ready, Application Ready, or later} |
+| Application packets ready | {n with status Application Ready} |
 | Applied | {n} |
 | Response rate | {responses / applied}% |
 | Interviews | {n} |
@@ -96,6 +104,10 @@ Based on current state:
 
 - Mostly "Evaluated": "You've got evaluations but haven't applied to many.
   Want me to tailor resumes for your top-scored roles?"
+- Has "Resume Draft": "You have resume drafts awaiting your accuracy review.
+  Approve or revise those before preparing application answers."
+- Has "Application Ready": "Your packet is reviewed. Submit it manually, then
+  tell me when it is sent so I can record the Applied date."
 - Several "Applied" with no updates: "Time for follow-ups? I can draft
   outreach messages to check in on your applications."
 - Has "Interview": "Great, you have interviews! Want me to research

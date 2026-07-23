@@ -16,6 +16,10 @@ Search company career portals for roles matching your profile.
 Use ATS type and slug detection (see references/ats-endpoints.md) to build
 targeted site-scoped WebSearch queries.
 
+Read `references/job-identity.md` before deduplicating. Web search is a
+best-effort discovery method, not an exhaustive or guaranteed-current
+inventory.
+
 ## Step 0: Load Context
 
 1. Read `data/profile.yml` for target roles, skills, seniority
@@ -69,8 +73,9 @@ in the link text and the URL to the posting. Extract title and URL from
 each search result. If the search returns descriptions, extract location
 and department info as well.
 
-**Run multiple queries if needed:** One for the primary role, one for
-secondary roles. Deduplicate by URL before filtering.
+**Query budget:** Run at most one primary-role query and one secondary-role
+query per company unless the user asks for a broader scan. Canonicalize results
+using `references/job-identity.md`.
 
 ### Tier 2: Manual Fallback
 
@@ -94,23 +99,39 @@ For each job listing found:
    - Location/remote match: 0-2 points
    - Seniority alignment: 0-1 point
 
-3. **Dedup:**
-   - Check URL against `data/scan-history.md` (skip if seen)
-   - Check company + title against `data/applications.md` (skip if tracked)
+3. **Identity and freshness:**
+   - Extract an ATS job ID when present and derive the canonical URL.
+   - Same ATS ID or same canonical URL: definitive duplicate.
+   - Similar company/title with different IDs, URLs, or locations:
+     `Possible Duplicate`; keep both visible and ask the user before merging.
+   - Previously seen does not mean currently live. Record the first/last seen
+     dates separately from duplicate status.
+   - Never call a role "new" unless it has a new definitive job key.
+
+4. **Confidence label:**
+   - `Verified page`: current job page content was retrieved.
+   - `Snippet-only`: only a current search result snippet was available.
+   - `Stale/unknown`: the result date or live status could not be confirmed.
 
 ## Step 4: Output
 
 ```
 ## Scan Results: {Company} - {date}
 
-Found **{X}** openings, **{Y}** match your profile.
+Found **{X}** possible openings in public search results; **{Y}** may match
+your profile. This is not exhaustive.
 
 ### Matches (by relevance)
 
-| # | Role | Location | Relevance | Link |
-|---|---|---|---|---|
-| 1 | {title} | {location} | {score}/10 | {URL} |
-| 2 | ... | ... | ... | ... |
+| # | Role | Location | Relevance | Confidence | Job Key | Link |
+|---|---|---|---|---|---|---|
+| 1 | {title} | {location} | {score}/10 | {confidence} | {job-key} | {URL} |
+| 2 | ... | ... | ... | ... | ... | ... |
+
+### Possible Duplicates
+
+Show every possible pair and the fields that differ. Offer `Keep Both`,
+`Merge`, or `Ignore New`. Do not decide from fuzzy title similarity alone.
 
 ### Filtered Out ({Z} roles)
 {Brief list: "3 junior roles, 2 in unrelated departments, 1 requires
@@ -124,18 +145,22 @@ Add all matches to `data/pipeline.md` (create if doesn't exist):
 ```markdown
 # Job Pipeline
 
-| Date Found | Company | Role | Relevance | URL | Status |
-|---|---|---|---|---|---|
-| {today} | {company} | {title} | {score}/10 | {url} | New |
+| Date Found | Company | Role | Job Key | Posting URL | Relevance | Confidence | Quick Score | Status |
+|---|---|---|---|---|---|---|---|---|
+| {today} | {company} | {title} | {job-key} | {canonical-url} | {score}/10 | {confidence} | | New |
 ```
 
 Log ALL seen postings (matches + filtered) to `data/scan-history.md`:
 
 ```markdown
-| Date | Company | Role | URL | Action |
-|---|---|---|---|---|
-| {today} | {company} | {title} | {url} | Matched / Filtered: {reason} |
+| Date | Company | Role | Job Key | Posting URL | Confidence | Action |
+|---|---|---|---|---|---|---|
+| {today} | {company} | {title} | {job-key} | {canonical-url} | {confidence} | Matched / Filtered: {reason} |
 ```
+
+Filtered results remain visible in the response with a short reason. A user
+may override a filter. Do not permanently suppress a role solely because a
+previous scan filtered it.
 
 > "Found {Y} matching roles at {company}.
 >

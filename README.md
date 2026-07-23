@@ -1,72 +1,148 @@
 # career-ops
 
-A Claude Cowork plugin that turns your job search into a system. Evaluate job postings, generate ATS-optimized resumes, scan career portals, track applications, and more.
+A human-reviewed job-search copilot for Claude. It screens job postings,
+builds evidence-backed resume drafts, prepares application answers, tracks
+applications, and researches companies across industries.
 
-Works for any industry: tech, healthcare, finance, legal, creative, trades, and everything in between.
+career-ops is designed to improve application quality, not maximize unattended
+application volume. It does **not** create accounts, bypass logins, guarantee
+file uploads, or submit applications for you.
 
-Adapted from [santifer/career-ops](https://github.com/santifer/career-ops) for Claude Cowork.
+Adapted from [santifer/career-ops](https://github.com/santifer/career-ops).
 
-## Install
+## Install in Claude or Cowork
+
+Plugins are available on paid Claude plans.
+
+### Install directly from this repository
+
+1. Open Claude. In Cowork, open the **Cowork** tab first.
+2. Open **Customize** in the left sidebar, then **Plugins**.
+3. In **Personal plugins**, click **+**, then **Add marketplace**.
+4. Choose **Add from a repository** and enter:
+   `andrew-shwetzer/career-ops-plugin-do-not-fork-currently-updating-v2-`
+5. Open the added marketplace and install **career-ops**.
+6. Start a new conversation or Cowork task. Type `/` or click **+** to
+   confirm the career-ops skills appear.
+
+### Install from a ZIP
+
+1. Download `career-ops-2.0.0.zip` from this repository's latest release.
+   Do not unzip it.
+2. Open **Cowork > Customize > Plugins**.
+3. In **Personal plugins**, click **+** and choose the custom plugin upload
+   option.
+4. Upload the ZIP, confirm **career-ops** appears as installed, and start a
+   new task.
+
+If the ZIP is not attached to a release yet, a developer can build it with:
 
 ```bash
-# Local development
-claude --plugin-dir ./career-ops-plugin
-
-# Or clone into your plugins directory
-git clone https://github.com/andrewshwetzer/career-ops-plugin.git
+python3 scripts/package_plugin.py
 ```
 
-## Quick Start
+Claude's current plugin-install instructions are maintained in the
+[Claude Help Center](https://support.claude.com/en/articles/13837440-use-plugins-in-claude).
 
-1. Install the plugin
-2. Say **"set up my profile"** and paste your resume
-3. Paste a job posting and say **"evaluate this"**
-4. Say **"tailor my resume"** for your top matches
-5. Say **"help"** anytime to see what's available
+### Claude Code development install
+
+These commands are for Claude Code developers, not Cowork installation:
+
+```bash
+git clone https://github.com/andrew-shwetzer/career-ops-plugin-do-not-fork-currently-updating-v2-.git
+cd career-ops-plugin-do-not-fork-currently-updating-v2-
+claude --plugin-dir .
+```
+
+## Quick start
+
+1. Say **"set up my profile"** and provide your resume.
+2. Paste a job posting and ask **"should I apply?"** for a compact screen.
+3. Ask **"run the full evaluation"** for promising roles.
+4. Ask **"tailor my resume"**. career-ops creates a draft and a claim audit;
+   review both before approving the resume.
+5. Ask **"prepare my application packet"**. Copy the approved answers into
+   the application yourself, upload the approved resume, and submit manually.
+6. Tell career-ops when you submitted so it can update the tracker.
+
+The workflow is deliberately gated:
+
+```text
+Screen -> Full evaluation -> Resume draft -> Human approval
+       -> Application packet -> Manual submit -> Track outcome
+```
+
+career-ops will not silently reuse a generic resume for a different job.
 
 ## Skills
 
-| Skill | What It Does | Try Saying |
+| Skill | What it does | Try saying |
 |---|---|---|
-| **evaluate** | Score a job posting A-F with detailed analysis | "Evaluate this job posting" |
-| **tailor-resume** | ATS-optimized resume for a specific role | "Tailor my resume for Acme" |
-| **scan** | Search company career portals | "Scan Stripe for openings" |
-| **triage** | Quick-score pipeline from scan results | "Triage my pipeline" |
-| **track** | Application tracker with stats | "Show my applications" |
-| **apply** | Fill out application forms | "Help me with this application" |
-| **research** | Company intelligence brief | "Research this company" |
-| **outreach** | Draft LinkedIn/email messages | "Draft outreach to the hiring manager" |
-| **compare** | Side-by-side opportunity comparison | "Compare my top options" |
+| **screen** | Compact, low-token fit check | "Should I apply to this?" |
+| **evaluate** | Full evidence-backed evaluation | "Run the full evaluation" |
+| **tailor-resume** | Create and audit a role-specific resume draft | "Tailor my resume for Acme" |
+| **scan** | Find possible openings on public career pages | "Scan Stripe for openings" |
+| **triage** | Rank scan results with confidence labels | "Triage my pipeline" |
+| **apply** | Prepare a reviewed application-answer packet | "Prepare my Acme application packet" |
+| **track** | View and update application outcomes | "Show my applications" |
+| **research** | Build a sourced company brief | "Research this company" |
+| **outreach** | Draft evidence-backed messages | "Draft outreach to the hiring manager" |
+| **compare** | Compare evaluated opportunities | "Compare my top options" |
+| **help** | Explain the workflow and next safe action | "How does career-ops work?" |
 
-## How Evaluation Works
+## What career-ops can and cannot do
 
-Paste a job posting (text or URL) and get a full A-F assessment:
+| Capability | Supported behavior |
+|---|---|
+| Find jobs | Best-effort public web search. Results may be incomplete or stale. |
+| Score fit | Evidence-backed guidance, not a hiring prediction. |
+| Tailor resumes | Drafts only from facts in your profile, with a claim audit for review. |
+| Write answers | Produces copy-ready drafts and flags missing facts. |
+| Fill forms | May assist when Claude has working browser tools, but never promises compatibility. |
+| Accounts and login | You create accounts, sign in, handle MFA, and manage passwords. |
+| Resume upload | You verify and upload the approved file. |
+| Submit | You make the final submission. career-ops never auto-submits. |
 
-- **A. Executive Summary** - Archetype, seniority, one-line verdict
-- **B. Background Match** - Every JD requirement mapped to your experience
-- **C. Positioning Strategy** - How to present yourself for this specific role
-- **D. Compensation & Market** - Salary data and alignment check
-- **E. Tailoring Plan** - Specific resume and LinkedIn changes to make
-- **F. Interview Prep** - STAR stories mapped to JD requirements
+## Duplicate handling
 
-Score from 1.0 to 5.0. Honest, not inflated.
-
-## Industry Support
-
-15 archetypes with specialized evaluation lenses:
-
-Technology, Finance, Healthcare, Legal, Creative/Marketing, Operations,
-Sales/BD, Education, Executive, Trades, Customer Success, People/HR,
-Government/Nonprofit, Scientific/R&D, Non-Software Engineering
-
-Each archetype adjusts scoring weights and evaluation language for that industry.
+Definitive duplicates require the same ATS job ID or the same normalized
+posting URL. Similar company/title combinations are shown as **possible
+duplicates** for your review; they are not silently discarded. See
+[`references/job-identity.md`](references/job-identity.md).
 
 ## Privacy
 
-Your data stays local. The `data/` directory (profile, applications, resumes)
-is excluded from git via `.gitignore`. Nothing is sent to external services
-beyond what Claude uses to help you (web searches for salary data, ATS API
-calls for job scanning).
+Profile, resume, and application files are written to the current Cowork
+project or Claude Code working directory under `data/` and are excluded from
+git by this repository's `.gitignore`. Claude can access information you
+provide while helping you, and web-enabled skills may send search queries to
+Claude's web tools.
+
+Do not store Social Security numbers, government ID numbers, passwords,
+authentication codes, full birth dates, or other secrets in the profile.
+Enter sensitive form fields yourself.
+
+## Testing
+
+Run both checks before packaging or publishing:
+
+```bash
+claude plugin validate .
+python3 scripts/validate_plugin.py
+python3 scripts/package_plugin.py
+```
+
+The static validator checks plugin and marketplace metadata, component frontmatter,
+resource links, workflow gates, tracker schemas, stale repository URLs, and
+packaging safety. Manual acceptance scenarios live in
+[`tests/scenarios.md`](tests/scenarios.md). Current results and remaining
+release blockers are in [`TEST_REPORT.md`](TEST_REPORT.md).
+
+## Project status
+
+Version 2.0.0 is a corrective release based on public user feedback. The
+audit and issue-to-fix mapping are in [`AUDIT.md`](AUDIT.md), and release
+details are in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## License
 

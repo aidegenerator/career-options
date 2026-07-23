@@ -30,12 +30,13 @@ Otherwise show the full directory:
 
 | Skill | What It Does | Try Saying |
 |---|---|---|
-| **evaluate** | Score a job posting against your background (A-F blocks) | "Evaluate this job posting" |
-| **tailor-resume** | Generate an ATS-optimized resume for a specific role | "Tailor my resume for the Acme role" |
+| **screen** | Compact first-pass fit check | "Should I apply to this?" |
+| **evaluate** | Full, saved job evaluation | "Run the full evaluation" |
+| **tailor-resume** | Create and source-audit an exact-role resume draft | "Tailor my resume for the Acme role" |
 | **scan** | Search company career portals for matching openings | "Scan Google for jobs" |
 | **triage** | Quick-score your pipeline of scan results | "Triage my pipeline" |
 | **track** | View and update your application tracker | "Show my applications" |
-| **apply** | Help fill out application forms | "Help me with this application" |
+| **apply** | Prepare a reviewed application-answer packet | "Prepare my application packet" |
 | **research** | Deep-dive a company before applying or interviewing | "Research Stripe" |
 | **outreach** | Draft LinkedIn/email messages to contacts | "Draft outreach to the hiring manager" |
 | **compare** | Side-by-side comparison of opportunities | "Compare my top options" |
@@ -56,16 +57,20 @@ Based on the user's current state, suggest the most valuable next action:
 > evaluate jobs for you."
 
 **Profile exists, no evaluations:**
-> "You're all set! Paste a job posting (URL or text) and I'll evaluate
-> how well you match."
+> "You're all set! Paste a job posting (URL or text) and I'll screen the
+> fit before running a full evaluation."
 
 **Has evaluations, no resumes:**
 > "You have {n} evaluations. Your top match is **{company} - {role}**
 > ({score}/5.0). Want me to tailor a resume for it?"
 
-**Has resumes, none applied:**
-> "You have resumes ready for {n} roles. Ready to apply? Say 'help me
-> with the {company} application' and I'll generate your form answers."
+**Has resume drafts awaiting approval:**
+> "You have {n} resume drafts to review. Open the draft and claim audit,
+> then approve or revise each one before preparing application answers."
+
+**Has approved resumes, none applied:**
+> "You have approved resumes for {n} roles. Say 'prepare my {company}
+> application packet' and I'll draft answers for you to review and enter."
 
 **Has applications:**
 > "You have {n} active applications. Say 'show my applications' for a
@@ -81,13 +86,15 @@ Based on the user's current state, suggest the most valuable next action:
 
 1. **Set up** your profile (one time, 5 minutes)
    ↓
-2. **Evaluate** job postings (paste a JD, get an honest A-F assessment)
+2. **Screen** job postings (compact decision first)
    ↓
-3. **Tailor** your resume for the best matches
+3. **Evaluate** promising roles in detail
    ↓
-4. **Apply** with personalized form answers
+4. **Tailor and approve** an exact-role resume
    ↓
-5. **Track** your applications and follow up
+5. **Prepare and review** an application packet
+   ↓
+6. **Submit manually**, then track the outcome
 
 **Discovery tools** (use anytime):
 - **Scan** company career pages for new openings
@@ -95,3 +102,6 @@ Based on the user's current state, suggest the most valuable next action:
 - **Outreach** to contacts at target companies
 - **Compare** multiple opportunities side by side
 ```
+
+If asked about automation limits, say plainly: career-ops does not create
+accounts, handle passwords or MFA, guarantee uploads, or click Submit.

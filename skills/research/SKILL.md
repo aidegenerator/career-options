@@ -15,6 +15,10 @@ allowed-tools:
 
 Build an intelligence brief on a target company.
 
+Every current fact needs a source URL and publication/access date. Distinguish
+reported facts from inference. Do not infer a hiring manager from a title
+alone; label them `Possible contact`.
+
 ## Step 1: Gather Data
 
 Use WebSearch to find:
@@ -22,8 +26,8 @@ Use WebSearch to find:
 1. **Company basics:** What they do, size, founded, HQ, funding/revenue
 2. **Recent news (last 6 months):** Product launches, layoffs, acquisitions,
    leadership changes, funding rounds
-3. **Culture signals:** Glassdoor rating + recurring themes, any "best places
-   to work" lists or notable controversies
+3. **Culture signals:** Public employee-review summaries and recurring themes,
+   with sample size/date when visible; do not treat one platform as ground truth
 4. **Team/department:** Who leads the department you'd join? Likely hiring
    manager? Team size?
 5. **Tech/tools/methodology:** What does this team use? (Check job postings,
@@ -43,7 +47,7 @@ Search for likely hiring contacts:
 - **Recruiter** (search "{company} recruiter {department}")
 - **Team members** (potential peers for informational outreach)
 
-For each contact found: Name, Title, and where you found them.
+For each contact found: Name, Title, source URL, source date, and confidence.
 
 Note: Do NOT scrape LinkedIn profiles directly. Use web search results
 and public company pages only.
@@ -80,9 +84,9 @@ reference it to add context to the brief.
 **Work style:** {remote/hybrid/in-office, hours culture}
 
 ### Key Contacts
-| Name | Title | Source |
-|---|---|---|
-| {name} | {title} | {where found} |
+| Name | Title | Source | Confidence |
+|---|---|---|---|
+| {name} | {title} | {linked source, date} | Confirmed / Possible |
 
 ### Interview Intelligence
 - **Company values/mission:** {what they emphasize}
@@ -92,6 +96,9 @@ reference it to add context to the brief.
   2. {question about team/culture}
   3. {question about role's impact}
 - **Topics to handle carefully:** {any sensitive items}
+
+### Source Notes
+- {claim} — {source URL}, published/accessed {date}
 ```
 
 ## Step 5: Save

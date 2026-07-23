@@ -67,6 +67,9 @@ Good: "I managed a $2M portfolio with 98% client retention"
 Pull the most relevant proof point from the user's profile that connects
 to the target company's needs.
 
+If the profile has no relevant quantified proof point, use a specific
+unquantified fact. Never invent a number to satisfy the structure.
+
 ### Part 3: Proposal (low-pressure ask)
 
 Bad: "Can you refer me?" (presumptuous)
@@ -106,6 +109,9 @@ Good: "I'd appreciate any advice on standing out for the {role} opening"
 - NEVER draft overly flattering or sycophantic messages
 - Keep LinkedIn connection requests under 300 characters (hard limit)
 - Every message must contain something specific (not a template)
+- Apply `voice.tone`, `voice.formality`, and `voice.avoid_phrases`
+- Avoid obvious generated-language patterns and do not copy a company tagline
+  or JD sentence as the hook
 - If no company research and no web search available, be honest:
   "This message would be stronger with specific company context.
   Consider researching them first."

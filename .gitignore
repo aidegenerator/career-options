@@ -1,8 +1,11 @@
 # Candidate data (PII protection)
-data/
-config/
+/data/
+/config/
 
 # OS files
 .DS_Store
 Thumbs.db
 prd/
+dist/
+__pycache__/
+*.pyc

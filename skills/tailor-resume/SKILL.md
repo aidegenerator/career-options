@@ -1,6 +1,6 @@
 ---
 name: tailor-resume
-description: "Generate an ATS-optimized resume tailored to a specific job posting. Creates clean HTML you can print to PDF. Works for any industry. Use when someone says 'tailor my resume', 'make me a resume', 'create a resume for', or 'update my resume for'."
+description: "Create an ATS-compatible resume draft for one evaluated job, plus a source-evidence claim audit. The user must review and approve it before it becomes Resume Ready. Use when someone says 'tailor my resume', 'make me a resume', 'create a resume for', or 'update my resume for'."
 argument-hint: "<company name or 'for the latest evaluation'>"
 user-invocable: true
 allowed-tools:
@@ -11,8 +11,9 @@ allowed-tools:
 
 # Tailor Your Resume
 
-Generate an ATS-optimized resume customized for a specific job posting.
+Generate an ATS-compatible resume draft customized for a specific job posting.
 Read references/ats-rules.md before generating any HTML.
+Read `references/workflow-gates.md` and `references/job-identity.md`.
 
 ## Step 0: Load Context
 
@@ -25,15 +26,22 @@ Read references/ats-rules.md before generating any HTML.
 4. If no evaluation exists:
    > "I need to evaluate the job first so I know what to emphasize.
    > Paste the job posting and I'll assess it, then generate your resume."
+5. Verify that the evaluation's company, role, and `Job Key` match the target
+   tracker row. Never reuse an evaluation or resume from a similarly named
+   role.
 
 ## Step 1: Keyword Extraction
 
-From the evaluation + JD, extract 15-20 keywords that ATS systems scan for:
+From the evaluation + JD, extract 10-15 relevant keywords:
 
 - Exact phrases from "Required Qualifications" (highest priority)
 - Industry-standard terms (not creative synonyms)
 - Certifications, tools, methodologies named in the JD
 - Action verbs that match the responsibilities section
+
+Only use a keyword when the source resume or profile supports the underlying
+claim. Do not stuff a JD phrase into a bullet merely to increase keyword
+overlap. A missing requirement stays a gap.
 
 ## Step 2: Detect Language & Locale
 
@@ -47,20 +55,29 @@ From the evaluation + JD, extract 15-20 keywords that ATS systems scan for:
 Using the evaluation's Block E (Tailoring Plan) as a guide, construct
 each resume section from profile data:
 
+Preserve work history in reverse chronological order. Reorder bullets within a
+role for relevance, but never reorder employers to make an older role appear
+current. Preserve employer names, job titles, dates, credentials, and metrics
+unless the user corrects them.
+
 ### Professional Summary (3-4 lines)
 - Open with years of experience + core identity
 - Include 3-5 top keywords from the JD naturally
 - End with a forward-looking statement connecting to this specific role
 - Use the narrative.headline from profile as a starting point
+- Avoid generic claims such as "results-driven" unless the source evidence
+  immediately proves them
 
 ### Experience Section
-- Include all roles from work_history, most relevant FIRST
+- Include roles from work_history in reverse chronological order
 - For each role: Company, Title, Dates on one line
 - 3-5 bullets per role, ordered by relevance to THIS JD
 - Each bullet: Action verb + what you did + quantified result
 - Mirror JD language exactly (if JD says "project management",
   write "project management", not "programme management")
 - Pull specific numbers from proof_points and work_history highlights
+- Never add a number, scope, tool, credential, or responsibility that does not
+  appear in the source profile or resume
 
 ### Education Section
 - Degree, School, Year
@@ -96,7 +113,27 @@ ATS compliance rules (from references/ats-rules.md):
 - No headers/footers (ATS strips them)
 - Max 2 pages
 
-## Step 5: Output
+## Step 5: Create a Claim Audit
+
+For every materially changed or newly written summary sentence and bullet,
+create:
+
+`data/resumes/{company-slug}-{role-slug}-claim-audit.md`
+
+```markdown
+# Resume Claim Audit: {Company} - {Role}
+
+Job Key: {job-key}
+
+| Draft Claim | Source Evidence | Transformation | Status |
+|---|---|---|---|
+| {resume text} | {exact profile field or source-resume text} | Reordered / shortened / combined / unchanged | Supported |
+```
+
+If a desired claim lacks source evidence, do not place it in the resume. Add
+it to a `NEEDS USER INPUT` section in the audit.
+
+## Step 6: Output Draft
 
 Write the HTML to `data/resumes/{company-slug}-{role-slug}.html`.
 
@@ -113,12 +150,22 @@ Show the user a preview of the content (not the HTML code):
 
 **Skills:** {top 10}
 
-**Keywords matched:** {n}/20 from the JD
+**Supported keywords used:** {n} of {total relevant keywords}
+**Claim audit:** `data/resumes/{audit-filename}`
 ```
 
-## Step 6: PDF Instructions
+Run a quality pass before presenting the draft:
+
+- Apply `voice.tone`, `voice.formality`, and `voice.avoid_phrases`.
+- Remove empty adjectives, copied JD clauses, and repetitive verbs.
+- Confirm chronology, company names, titles, dates, metrics, and credentials
+  against the source.
+- Label the result `Resume Draft`, not `Resume Ready`.
+
+## Step 7: Review and PDF Instructions
 
 > "Your tailored resume is saved at `data/resumes/{filename}.html`.
+> Its source check is saved at `data/resumes/{audit-filename}`.
 >
 > **To save as PDF:**
 > 1. Open the file in your browser (double-click it)
@@ -126,17 +173,22 @@ Show the user a preview of the content (not the HTML code):
 > 3. Select **Save as PDF**
 > 4. Done!
 >
-> The HTML is designed to print cleanly. What you see is what you get."
+> The HTML is designed to print cleanly. Please compare the draft and claim
+> audit with your original resume. Tell me what to change, or explicitly say
+> 'approve this resume' when every claim is accurate."
 
-## Step 7: Update Tracker
+## Step 8: Update Tracker
 
 Update the matching row in `data/applications.md`:
-- Status: "Resume Ready" (if currently "Evaluated")
-- Notes: append "Resume: {filename}"
+- Status: `Resume Draft`
+- Resume: `[Draft](resumes/{filename})`
+- Notes: append `Claim audit: {audit-filename}`
 
-## Step 8: Next Steps
+Only after the user explicitly approves the draft:
 
-> "Resume is ready! Next steps:
-> - **Review it** by opening the HTML file
-> - **Apply** by saying 'help me with the {company} application'
-> - **Compare** this role with others: 'compare my options'"
+1. Change status from `Resume Draft` to `Resume Ready`.
+2. Record `User approved {date}` in Notes.
+3. Offer application-packet preparation.
+
+Until approval, do not proceed as though the resume is ready and do not
+prepare final application answers.
