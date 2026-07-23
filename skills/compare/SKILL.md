@@ -21,7 +21,8 @@ role, location, and compensation from each.
 
 - If user specified companies/roles: match to evaluations (fuzzy OK)
 - If "compare my top options" or no argument: select top 3-5 by score
-  with non-terminal status (Evaluated, Resume Ready, Applied, Interview)
+  with non-terminal status (Evaluated, Resume Draft, Resume Ready,
+  Application Ready, Applied, Responded, Interview, Offer)
 - If fewer than 2 evaluations exist:
   > "You need at least 2 evaluated jobs to compare. Evaluate more
   > postings first by pasting a JD."
@@ -71,13 +72,16 @@ These must reference actual evaluation data, not generic statements.
 **Best growth opportunity:** {Company - Role}
 {1-2 sentences: highest upside if you can close the gaps}
 
-**Safest option:** {Company - Role}
-{1-2 sentences: most likely to result in an offer}
+**Lowest execution risk:** {Company - Role}
+{1-2 sentences: fewest documented fit or logistics gaps}
 ```
 
 If scores are very close (within 0.3), say so:
 > "These are genuinely close. The tiebreaker is which company and role
 > excites you most. Numbers can't measure that."
+
+Do not describe any option as likely to produce an offer. The scores compare
+documented fit; they do not predict employer decisions.
 
 ## Step 5: Next Steps
 

@@ -3,9 +3,9 @@
 career-ops-plugin is a Claude Cowork adaptation of
 [career-ops](https://github.com/santifer/career-ops) by santifer.
 
-The original career-ops is a Claude Code skill for job search automation,
-featuring the A-F scoring rubric, ATS-optimized resume generation, and
-application tracking system that this plugin builds upon.
+The original career-ops is a Claude Code job-search system featuring an A-F
+scoring rubric, resume generation, and application tracking that this plugin
+builds upon.
 
 ## What we adapted
 
@@ -19,7 +19,10 @@ application tracking system that this plugin builds upon.
 
 - Converted from Claude Code skill to Cowork plugin format
 - Replaced 6 tech-specific archetypes with 15 industry-general archetypes
-- Replaced Playwright/Node dependencies with computer use + WebFetch
+- Reworked browser automation into a human-reviewed application-packet flow
+- Added honest Cowork boundaries for login, MFA, uploads, and submission
+- Added conservative job identity and possible-duplicate review
+- Added compact screening, resume claim audits, and explicit approval gates
 - Added resume ingestion (paste your resume, Claude parses it)
 - Added conversational setup wizard for non-technical users
 - Redesigned output for Cowork's GUI (tables, checkboxes, scannable format)

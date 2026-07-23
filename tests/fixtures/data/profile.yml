@@ -1,0 +1,84 @@
+name: "Jordan Lee"
+email: "jordan@example.test"
+phone: "555-0100"
+location: "Boston, MA"
+work_preference: "remote"
+visa_status: "US Citizen"
+
+current:
+  title: "Operations Manager"
+  company: "Northstar Health"
+  years_experience: 7
+
+target:
+  primary_role: "Director of Operations"
+  secondary_roles:
+    - "Senior Operations Manager"
+  industries:
+    - "Healthcare"
+  seniority: "director"
+  exclude_keywords:
+    - "Federal clearance"
+
+skills:
+  - "Process improvement"
+  - "Cross-functional leadership"
+  - "Vendor management"
+  - "Budget management"
+
+narrative:
+  headline: "Healthcare operations leader focused on reliable delivery"
+  story: "Progressed from program coordination into operations leadership."
+  superpowers: "Process improvement, stakeholder alignment, team leadership"
+
+voice:
+  tone: "direct, warm, specific"
+  sample: "I like clear plans, honest tradeoffs, and practical follow-through."
+  avoid_phrases:
+    - "I was drawn to"
+    - "at the intersection of"
+  formality: "professional"
+
+workflow:
+  full_evaluation_threshold: 3.5
+  require_exact_role_evaluation: true
+  require_tailored_resume: true
+  submission_mode: "manual"
+  hard_exclusions:
+    - "Federal clearance required"
+  preferred_application_pace: "quality-first"
+
+work_history:
+  - title: "Operations Manager"
+    company: "Northstar Health"
+    dates: "Jan 2022 - Present"
+    highlights:
+      - "Reduced patient intake cycle time by 18 percent"
+      - "Managed a team of 9 across two clinics"
+      - "Renegotiated vendor contracts and reduced annual costs by $120,000"
+  - title: "Program Coordinator"
+    company: "Harbor Clinic"
+    dates: "Jun 2019 - Dec 2021"
+    highlights:
+      - "Coordinated scheduling and reporting for five clinical programs"
+
+education:
+  - degree: "BA Public Health"
+    school: "Example University"
+    year: 2019
+
+compensation:
+  target: "$150,000"
+  minimum: "$135,000"
+  currency: "USD"
+
+proof_points:
+  - "Reduced patient intake cycle time by 18 percent at Northstar Health"
+  - "Managed a team of 9 across two clinics"
+  - "Reduced annual vendor costs by $120,000"
+
+persona:
+  recent_graduate: false
+  career_changer: false
+  career_returner: false
+  international: false

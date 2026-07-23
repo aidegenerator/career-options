@@ -1,6 +1,6 @@
 ---
 name: setup
-description: "Set up your job search profile. Paste your resume or answer a few questions. Takes 5 minutes. Needed before evaluating jobs."
+description: "Set up your job search profile, evidence base, voice preferences, and application guardrails. Paste your resume or answer questions. Needed before screening jobs."
 argument-hint: "[--reset to start over]"
 user-invocable: true
 allowed-tools:
@@ -13,6 +13,12 @@ allowed-tools:
 
 Walk the user through creating their job search profile. Conversational,
 friendly, zero jargon. This is the first thing a new user does.
+
+Read `references/workflow-gates.md` and `references/profile-schema.md`.
+
+Never ask the user to store passwords, MFA codes, government ID numbers,
+Social Security numbers, or full birth dates. Those fields must be entered by
+the user directly on an application form.
 
 ## Step 0: Check Existing
 
@@ -56,6 +62,9 @@ If the user pastes resume content:
    - "What kind of role are you looking for next?"
    - "Where are you willing to work? (Remote, specific city, flexible)"
    - "What's your target salary range? (Skip if you'd rather not say)"
+   - "What are your hard no's? (location, travel, clearance, schedule, industry)"
+   - "How should application writing sound like you? Share a short writing
+     sample or name a few preferences. This is optional."
    - "Anything else I should know? Career change, gap to explain, special situation?"
 
 4. Continue to Step 3.
@@ -75,7 +84,10 @@ If the user prefers questions, ask these one at a time. Wait for each answer.
 8. "Any certifications or licenses? (Skip if none)"
 9. "What's your salary range? (Target and minimum, or skip)"
 10. "Got a LinkedIn profile URL?"
-11. "Anything else? (Career change, gap, special circumstances, portfolio)"
+11. "What are your hard no's? (location, travel, clearance, schedule, industry)"
+12. "How should application writing sound like you? You can share a short
+    sample, phrases to avoid, or just say direct/formal/conversational."
+13. "Anything else? (Career change, gap, special circumstances, portfolio)"
 
 ## Step 3: Build Profile
 
@@ -92,6 +104,12 @@ Key rules:
   - If visa_status is anything other than citizen/permanent resident: `international: true`
 - Generate `narrative.headline` from their experience (one compelling line)
 - Generate `narrative.superpowers` from their strongest skills/achievements
+- Set workflow defaults:
+  - `full_evaluation_threshold: 3.5`
+  - `require_exact_role_evaluation: true`
+  - `require_tailored_resume: true`
+  - `submission_mode: manual`
+- Store voice guidance under `voice`; do not invent a voice sample
 
 Write the completed profile to `data/profile.yml`.
 
@@ -107,6 +125,8 @@ Show the user a summary:
 > **Location:** {preference}
 > **Key skills:** {top 5}
 > **Salary target:** {range}
+> **Hard no's:** {workflow exclusions}
+> **Writing style:** {voice summary or "not set"}
 >
 > **Work history:**
 > - {Role 1} at {Company} ({dates})
@@ -121,8 +141,8 @@ Wait for confirmation. Fix any corrections.
 
 > "You're all set! Here's what to do next:
 >
-> **Option 1:** Paste a job posting (URL or text) and I'll evaluate how well
-> you match.
+> **Option 1:** Paste a job posting (URL or text) and I'll screen the fit
+> before spending time on a full evaluation.
 >
 > **Option 2:** Say 'scan [company name]' to search their career page for
 > openings.
@@ -134,6 +154,13 @@ Create `data/applications.md` if it doesn't exist:
 ```markdown
 # Job Applications
 
-| Date Added | Date Applied | Company | Role | Score | Status | Evaluation | Notes |
-|---|---|---|---|---|---|---|---|
+| Date Added | Date Applied | Company | Role | Job Key | Posting URL | Score | Status | Evaluation | Resume | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|
 ```
+
+If an older tracker exists with fewer columns, migrate it in place:
+
+1. Preserve every row and note.
+2. Insert empty `Job Key`, `Posting URL`, and `Resume` cells.
+3. Show the user a one-line migration summary.
+4. Never delete or merge an old row during schema migration.

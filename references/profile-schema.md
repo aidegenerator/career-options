@@ -57,6 +57,25 @@ narrative:
   story: "Transitioned from engineering to product after building internal tools that became the company's main product line."
   superpowers: "Data-driven decisions, cross-functional leadership, 0-to-1 product launches"
 
+# === Voice ===
+voice:
+  tone: "direct, warm, specific"      # User's preference, not a personality guess.
+  sample: ""                          # Optional short sample written by the user.
+  avoid_phrases:
+    - "I was drawn to"
+    - "at the intersection of"
+  formality: "professional"           # conversational | professional | formal
+
+# === Workflow Guardrails ===
+workflow:
+  full_evaluation_threshold: 3.5
+  require_exact_role_evaluation: true
+  require_tailored_resume: true
+  submission_mode: "manual"           # Always manual in the public plugin.
+  hard_exclusions:
+    - "Federal clearance required"
+  preferred_application_pace: "quality-first"
+
 # === Work History (parsed from resume) ===
 work_history:
   - title: "Senior Product Manager"
@@ -116,3 +135,9 @@ persona:                           # Optional. Triggers special scoring adjustme
   Trades, Non-Software Engineering, Finance, Education, Government).
   If your industry doesn't require licenses, leave it empty.
 - `persona` modifiers adjust scoring weights. See scoring-rubric.md.
+- `voice` keeps materials specific to the user and records phrases they do
+  not want. A blank sample is better than an invented one.
+- `workflow` controls spend and gates. The user can override the evaluation
+  threshold for a specific role, but submission remains manual.
+- Never store passwords, MFA codes, government ID numbers, Social Security
+  numbers, or full birth dates in this file.

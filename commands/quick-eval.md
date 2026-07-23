@@ -1,6 +1,6 @@
 ---
 name: quick-eval
-description: "Quick job evaluation. Paste a JD and get a score plus one-paragraph summary. Faster than a full evaluate. Use when someone says 'quick eval', 'quick score', or 'just give me a number'."
+description: "Legacy shortcut for the compact screen workflow. Paste a JD and get a score plus a short evidence-backed decision. Use when someone explicitly invokes quick-eval."
 model: haiku
 argument-hint: "<paste JD or URL>"
 user-invocable: true
@@ -13,6 +13,9 @@ allowed-tools:
 
 Fast, lightweight version of evaluate. Score + one paragraph. No blocks A-F.
 No file saved. No tracker update. Just a quick read.
+
+Follow `references/workflow-gates.md` and use the same evidence and unknowns
+rules as the `screen` skill.
 
 ## Step 0: Load Profile
 

@@ -1,153 +1,163 @@
 ---
 name: apply
-description: "Help fill out a job application form. Generates personalized answers for every field using your profile and evaluation. Never auto-submits. Use when someone says 'help me apply', 'fill out this application', or 'application for'."
-argument-hint: "<company name or 'help me with this application'>"
+description: "Prepare a reviewed, copy-ready application packet for one evaluated role with an approved exact-role resume. Never auto-submits. Use when someone says 'help me apply', 'prepare my application', 'answer these application questions', or 'application for'."
+argument-hint: "<company and role, plus pasted application questions when available>"
 user-invocable: true
 disable-model-invocation: true
 allowed-tools:
   - Read
   - Write
   - Glob
-  - WebFetch
 ---
 
-# Application Form Assistant
+# Prepare an Application Packet
 
-Help fill out job application forms with personalized, honest answers.
+Prepare accurate, role-specific answers for the user to review and enter.
 
-**CRITICAL: NEVER auto-submit an application.** Always show the user every
-answer and get explicit confirmation before any form interaction. Always stop
-before any submit button.
+Read `references/workflow-gates.md`, `references/job-identity.md`, and
+`references/states.md`.
 
-## Step 0: Load Context
+**CRITICAL: never auto-submit an application.** Account creation, login, MFA,
+passwords, sensitive identity fields, resume upload, and the final Submit
+button remain under the user's control.
 
-1. Read `data/profile.yml` for structured background
-2. Read `data/resume.md` for full resume text
-3. Find the relevant evaluation in `data/evaluations/`
-4. Check `data/research/{company}.md` for company intel
-5. Check `data/resumes/` for a tailored resume file
+## Step 1: Identify the exact posting
 
-If no evaluation exists for this company:
-> "I haven't evaluated this role yet. Want me to evaluate the posting
-> first? That gives me better context for your application answers."
+Resolve the company, role, canonical `Job Key`, and `Posting URL`.
 
-## Step 1: Identify the Application
+Load:
 
-Parse user input:
-- **Company/role name:** Find the matching evaluation
-- **"Help me with this application":** Ask which company/role, or if
-  computer use is available, take a screenshot to identify the form
+1. `data/profile.yml` and `data/resume.md`;
+2. the exact-key row in `data/applications.md`;
+3. the exact-key evaluation from `data/evaluations/`;
+4. the exact-key resume and claim audit from `data/resumes/`;
+5. optional company research from `data/research/`.
 
-## Step 2: Map Common Form Fields
+Do not use a resume or evaluation merely because the company and title look
+similar. Follow `references/job-identity.md`.
 
-Generate answers for standard application fields:
+## Step 2: Enforce the gates
 
-| Field | Source | How to Fill |
-|---|---|---|
-| Name / Email / Phone | profile.yml | Direct copy |
-| Resume upload | Point to file | "Upload `data/resumes/{file}.html` (or PDF if you printed it)" |
-| Cover letter | Generate below | Tailored to this role |
-| "Why this company?" | Research + evaluation | Specific, referencing company details |
-| "Why this role?" | Evaluation Block C + narrative | Connect background to role requirements |
-| Years of experience | profile.yml | Honest number |
-| Salary expectations | Evaluation Block D | Use target from profile, informed by market data |
-| Work authorization | profile.yml visa_status | Direct answer |
-| Willing to relocate | profile.yml work_preference | Direct answer |
-| Start date | Ask user | "When can you start?" |
+Stop at the first unmet gate:
 
-## Step 3: Cover Letter (when needed)
+1. **No exact-role evaluation:** ask for the posting and run the screen/full
+   evaluation workflow before continuing.
+2. **Score below the configured threshold:** show the main gap once and ask
+   whether the user still wants to continue. Respect the answer.
+3. **No exact-role resume:** run the tailoring workflow.
+4. **Resume status is `Resume Draft`:** ask the user to review the resume and
+   claim audit. Do not continue until the user explicitly approves it.
+5. **Resume status is not `Resume Ready`:** explain which artifact is missing.
 
-Structure:
-1. **Opening:** Specific hook about the company (NOT "I'm excited to apply")
-2. **Bridge:** How your specific background connects to their specific need
-3. **Evidence:** 2-3 concrete accomplishments from your experience relevant to this role
-4. **Close:** Forward-looking, confident but not presumptuous
+Never substitute one of the user's older or generic resumes to get around a
+missing artifact.
 
-Rules:
-- 250-350 words
-- Match JD language and keywords
-- Match company tone (formal for law firms, conversational for startups)
-- Reference specific details from research (if available)
-- Every claim must be backed by real experience from the profile
+## Step 3: Collect the actual questions
 
-## Step 4: Handle Custom Questions
+Ask the user to paste the application questions or fields. If they only
+provide a URL and its form is not readable, ask them to paste the text instead
+of repeatedly retrying access.
 
-For each custom application question:
+For private or sensitive fields, return `ENTER YOURSELF`:
 
-**Short answer (< 500 chars):**
-- Draw from evaluation blocks, profile, or research
-- Be specific, not generic
-- Include a number or concrete detail when possible
+- password or MFA code;
+- Social Security or government ID number;
+- full birth date;
+- demographic/EEO answers;
+- disability or veteran disclosure;
+- signature or legal attestation.
 
-**"Tell me about a time..." (behavioral):**
-- Use STAR format from evaluation Block F stories
-- Match the most relevant story to the question
+Explain that optional EEO fields are the user's choice. Do not answer them.
 
-**"What are your salary expectations?":**
-- Use target from profile, informed by Block D market data
-- If range requested, give profile target range
-- If single number requested, give midpoint of target range
+## Step 4: Draft with evidence
 
-**Yes/No questions (authorization, relocation, etc.):**
-- Answer directly from profile data
-- If not in profile, ask the user
+For every answer:
 
-**EEO / demographic questions:**
-- Tell the user these are optional and legally cannot affect their candidacy
-- Let them answer themselves
+- use only facts in the profile, source resume, approved tailored resume,
+  evaluation, or sourced company research;
+- cite the internal source used;
+- write `NEEDS USER INPUT` when a fact is absent;
+- follow the user's `voice` preferences;
+- answer yes/no fields directly;
+- do not imply a relationship, credential, tool, metric, or work authorization
+  status that is not documented.
 
-## Step 5: Present All Answers
+Common fields:
 
-Show EVERY generated answer before any action:
+| Field | Source and behavior |
+|---|---|
+| Name, email, phone | Direct copy from profile |
+| Resume | Point to the approved exact-role file; user verifies and uploads it |
+| Work authorization | Direct profile value or `NEEDS USER INPUT` |
+| Salary | Profile target plus stated JD range; ask before changing the target |
+| Start date | `NEEDS USER INPUT` unless the user provided it |
+| Why this role? | Role requirements plus source-backed experience |
+| Why this company? | Sourced company fact plus user's specific motivation |
+| Behavioral question | One real story; ask for missing Situation/Action/Result facts |
 
+## Step 5: Cover letter when requested
+
+Do not create a cover letter unless the form requires one or the user asks.
+When needed, keep it specific and source-backed:
+
+1. a concrete reason for this role or company;
+2. one or two relevant accomplishments;
+3. a direct closing.
+
+Apply the anti-template check:
+
+- remove phrases listed in `voice.avoid_phrases`;
+- avoid "I was drawn to," "at the intersection of," "I am excited to apply,"
+  and generic praise unless the user explicitly prefers them;
+- do not repeat a sentence from the JD with the subject changed to "I";
+- do not manufacture enthusiasm, familiarity, or company knowledge;
+- vary sentence structure and prefer the user's normal vocabulary.
+
+## Step 6: Present the complete packet
+
+Write `data/applications/{company-slug}-{role-slug}-packet.md`:
+
+```markdown
+# Application Packet: {Company} - {Role}
+
+Job Key: {job-key}
+Posting URL: {canonical-url}
+Approved resume: {resume-file}
+
+| # | Field or Question | Draft Answer | Evidence | Review |
+|---|---|---|---|---|
+| 1 | {question} | {answer or NEEDS USER INPUT} | {profile/resume/evaluation source} | Pending |
+
+## User-entered fields
+
+- {sensitive, legal, login, or unknown fields}
+
+## Pre-submit checklist
+
+- [ ] Every answer is accurate
+- [ ] Resume matches this Job Key
+- [ ] Resume file opens and renders correctly
+- [ ] Dates, salary, authorization, and contact details are correct
+- [ ] User completed sensitive and voluntary fields
+- [ ] User reviewed the final form before submitting
 ```
-## Application Answers: {Company} - {Role}
 
-**Cover letter:**
-{full text}
+Show all answers in chat. Ask the user to correct missing facts and approve the
+packet. Do not describe a form as filled, uploaded, or submitted unless the
+user confirms that action occurred.
 
-**"Why this company?"**
-{answer}
+## Step 7: Track honestly
 
-**"Why this role?"**
-{answer}
+After the user approves the packet:
 
-**Salary expectations:** {answer}
+- set status to `Application Ready`;
+- add the packet path to Notes.
 
-**Custom questions:**
-1. "{question}" - {answer}
-2. "{question}" - {answer}
+After the user confirms they submitted:
 
----
+- set status to `Applied`;
+- set Date Applied to today;
+- record the confirmed resume filename.
 
-Review these answers. You can:
-- Ask me to revise any answer
-- Copy them into the application form
-- Tell me to adjust the tone
-```
-
-## Step 6: Computer Use Assistance (only if available and user requests)
-
-If computer use is available AND the user explicitly asks for help filling
-the form:
-
-1. Navigate to the application page
-2. Fill each field with the APPROVED answers only
-3. Upload resume file if the form accepts it
-4. **STOP before the Submit button.** Take a screenshot. Say:
-
-> "Everything is filled in. Please review the form carefully and click
-> Submit when you're ready. I won't click it for you."
-
-If no computer use:
-> "Copy the answers above into the application form. Let me know
-> when you've submitted and I'll update your tracker."
-
-## Step 7: Update Tracker
-
-After the user confirms submission:
-- Update `data/applications.md`: Status -> "Applied", Date Applied -> today
-- Add note with any relevant details
-
-> "Tracked! Your application to {company} is logged. I'll remind you
-> to follow up if you haven't heard back in a week."
+If they have not confirmed submission, leave the status at
+`Application Ready`.

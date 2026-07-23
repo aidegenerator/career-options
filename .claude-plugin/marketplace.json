@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "andrew-shwetzer",
+  "description": "Human-reviewed career tools from Andrew Shwetzer.",
+  "owner": {
+    "name": "Andrew Shwetzer"
+  },
+  "plugins": [
+    {
+      "name": "career-ops",
+      "source": "./",
+      "description": "Human-reviewed job-search copilot for any industry. Screen job postings, create evidence-backed resume drafts, prepare application answers, track outcomes, and research companies without auto-submitting applications.",
+      "author": {
+        "name": "Andrew Shwetzer"
+      },
+      "homepage": "https://github.com/andrew-shwetzer/career-ops-plugin-do-not-fork-currently-updating-v2-",
+      "repository": "https://github.com/andrew-shwetzer/career-ops-plugin-do-not-fork-currently-updating-v2-",
+      "license": "MIT",
+      "keywords": [
+        "job-search",
+        "resume",
+        "career",
+        "ATS",
+        "applications",
+        "cowork",
+        "human-review"
+      ],
+      "category": "productivity"
+    }
+  ]
+}
